@@ -119,7 +119,7 @@ class MKVXML_tags:
 	def __init__(self):
 		self._tags = []
 	
-	def AddTag(self):
+	def NewTag(self):
 		t = MKVXML_tags.Tag()
 		self._tags.append(t)
 		return t

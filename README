@@ -1,3 +1,178 @@
 mkvxmlmaker -- Makes XML files for mkvmerge
 
 This module provides classes that can create XML files for feeding into mkvmerge.
+The two XML files supported are for specifying chapters and tags.
+
+MKVXML_chapter:
+
+	import mkvxmlmaker
+
+	c = mkvxmlmaker.MKVXML_chapter()
+	c.AddChapter('00:00:00.000', "Intro")
+	c.AddChapter('00:10:00.000', "Act 2")
+	c.AddChapter('00:20:00.000', "Act 3")
+	c.AddChapter('00:30:00.000', "Credits")
+
+	c.Save('./chapters.xml')
+
+Produces the following XML:
+
+	<?xml version="1.0" ?>
+	<!DOCTYPE Chapters
+	  SYSTEM 'matroskachapters.dtd'>
+	<Chapters>
+		<EditionEntry>
+			<ChapterAtom>
+				<ChapterTrack>
+					<ChapterTrackNumber>1</ChapterTrackNumber>
+				</ChapterTrack>
+				<ChapterTimeStart>00:00:00.000</ChapterTimeStart>
+				<ChapterDisplay>
+					<ChapterString>Intro</ChapterString>
+					<ChapterLanguage>eng</ChapterLanguage>
+				</ChapterDisplay>
+			</ChapterAtom>
+			<ChapterAtom>
+				<ChapterTrack>
+					<ChapterTrackNumber>2</ChapterTrackNumber>
+				</ChapterTrack>
+				<ChapterTimeStart>00:10:00.000</ChapterTimeStart>
+				<ChapterDisplay>
+					<ChapterString>Act 2</ChapterString>
+					<ChapterLanguage>eng</ChapterLanguage>
+				</ChapterDisplay>
+			</ChapterAtom>
+			<ChapterAtom>
+				<ChapterTrack>
+					<ChapterTrackNumber>3</ChapterTrackNumber>
+				</ChapterTrack>
+				<ChapterTimeStart>00:20:00.000</ChapterTimeStart>
+				<ChapterDisplay>
+					<ChapterString>Act 3</ChapterString>
+					<ChapterLanguage>eng</ChapterLanguage>
+				</ChapterDisplay>
+			</ChapterAtom>
+			<ChapterAtom>
+				<ChapterTrack>
+					<ChapterTrackNumber>4</ChapterTrackNumber>
+				</ChapterTrack>
+				<ChapterTimeStart>00:30:00.000</ChapterTimeStart>
+				<ChapterDisplay>
+					<ChapterString>Credits</ChapterString>
+					<ChapterLanguage>eng</ChapterLanguage>
+				</ChapterDisplay>
+			</ChapterAtom>
+		</EditionEntry>
+	</Chapters>
+
+MKVXML_tags
+
+	import mkvxmlmaker
+
+	c = mkvxmlmaker.MKVXML_tags()
+
+	t = c.NewTag()
+	t.TargetType = 'COLLECTION'
+	t.TargetTypeValue = 70
+	t['TITLE'] = 'ER'
+	t['TOTAL_PARTS'] = 15
+
+	t = c.NewTag()
+	t.TargetType = 'SEASON'
+	t.TargetTypeValue = 60
+	t['TITLE'] = 'Season 1'
+	t['PART_NUMBER'] = 1
+	t['TOTAL_PARTS'] = 25
+
+	t = c.NewTag()
+	t.TargetType = 'EPISODE'
+	t.TargetTypeValue = 50
+	t['TITLE'] = 'Make of Two Hearts'
+	t['PART_NUMBER'] = 16
+	t['WRITTEN_BY'] = 'Woodward, Lydia'
+	t['DIRECTED_BY'] = 'Leder, Mimi'
+	t['DESCRIPTION'] = 'Kayson pursues Lewis romantically. Ross and hathaway cope with a young Russian girl with AIDS whose adoptive mother abandons her. A humane policeman hauls in a dog he hit with his car.'
+
+	c.Save('./tags.xml')
+
+Produces the following XML:
+
+	<?xml version="1.0" ?>
+	<!DOCTYPE Tags
+	  SYSTEM 'matroskatags.dtd'>
+	<Tags>
+		<Tag>
+			<Targets>
+				<TargetType>COLLECTION</TargetType>
+				<TargetTypeValue>70</TargetTypeValue>
+			</Targets>
+			<Simple>
+				<Name>TITLE</Name>
+				<String>ER</String>
+				<TagLanguage>eng</TagLanguage>
+			</Simple>
+			<Simple>
+				<Name>TOTAL_PARTS</Name>
+				<String>15</String>
+				<TagLanguage>eng</TagLanguage>
+			</Simple>
+		</Tag>
+		<Tag>
+			<Targets>
+				<TargetType>SEASON</TargetType>
+				<TargetTypeValue>60</TargetTypeValue>
+			</Targets>
+			<Simple>
+				<Name>PART_NUMBER</Name>
+				<String>1</String>
+				<TagLanguage>eng</TagLanguage>
+			</Simple>
+			<Simple>
+				<Name>TITLE</Name>
+				<String>Season 1</String>
+				<TagLanguage>eng</TagLanguage>
+			</Simple>
+			<Simple>
+				<Name>TOTAL_PARTS</Name>
+				<String>25</String>
+				<TagLanguage>eng</TagLanguage>
+			</Simple>
+		</Tag>
+		<Tag>
+			<Targets>
+				<TargetType>EPISODE</TargetType>
+				<TargetTypeValue>50</TargetTypeValue>
+			</Targets>
+			<Simple>
+				<Name>DESCRIPTION</Name>
+				<String>Kayson pursues Lewis romantically. Ross and hathaway cope with a young Russian girl with AIDS whose adoptive mother abandons her. A humane policeman hauls in a dog he hit with his car.</String>
+				<TagLanguage>eng</TagLanguage>
+			</Simple>
+			<Simple>
+				<Name>DIRECTED_BY</Name>
+				<String>Leder, Mimi</String>
+				<TagLanguage>eng</TagLanguage>
+			</Simple>
+			<Simple>
+				<Name>PART_NUMBER</Name>
+				<String>16</String>
+				<TagLanguage>eng</TagLanguage>
+			</Simple>
+			<Simple>
+				<Name>TITLE</Name>
+				<String>Make of Two Hearts</String>
+				<TagLanguage>eng</TagLanguage>
+			</Simple>
+			<Simple>
+				<Name>WRITTEN_BY</Name>
+				<String>Woodward, Lydia</String>
+				<TagLanguage>eng</TagLanguage>
+			</Simple>
+		</Tag>
+	</Tags>
+
+These can then be used with mkvmerge to inject the data into the Matroska file:
+
+	mkvmerge -o out.mkv --chapters chapters.xml --global-tags tags.xml in.mkv
+
+
