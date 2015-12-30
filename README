@@ -175,4 +175,8 @@ These can then be used with mkvmerge to inject the data into the Matroska file:
 
 	mkvmerge -o out.mkv --chapters chapters.xml --global-tags tags.xml in.mkv
 
+Some notes:
+* Times provided to MKVXML_chapter.AddChapter are in absolute times, not lengths of the chapter
+* Tags are applied globally (if --global-tags is used), hence no UIDs are provided
+* AddAttachmentUID(), AddChapterUID(), AddEditionUID(), and AddTrackUID() are available to apply a tag to the specific UID
 
