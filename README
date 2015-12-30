@@ -1,0 +1,3 @@
+mkvxmlmaker -- Makes XML files for mkvmerge
+
+This module provides classes that can create XML files for feeding into mkvmerge.
