@@ -180,3 +180,8 @@ Some notes:
 * Tags are applied globally (if --global-tags is used), hence no UIDs are provided
 * AddAttachmentUID(), AddChapterUID(), AddEditionUID(), and AddTrackUID() are available to apply a tag to the specific UID
 
+Links:
+* https://mkvtoolnix.download/doc/mkvmerge.html
+* http://matroska.org/technical/specs/tagging/index.html
+* http://www.matroska.org/technical/specs/tagging/example-video.html
+
