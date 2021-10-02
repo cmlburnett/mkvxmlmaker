@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 majv = 1
-minv = 0
+minv = 1
 
 setup(
 	name = 'mkvxmlmaker',
