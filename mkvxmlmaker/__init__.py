@@ -9,6 +9,7 @@ from crudexml import node, tnode, dnode, docroot
 
 import os
 import subprocess
+import xml.etree.ElementTree as ET
 
 __all__ = ["MKVXML_chapter", "MKVXML_tags", "sec_str", "t_to_sec"]
 
@@ -23,24 +24,31 @@ def sec_str(sec):
 	hr,min = divmod(min, 60)
 
 	if hr > 0:
-		return "%d:%02d:%02d" % (hr,min,sec)
+		return "%d:%02d:%06.03f" % (hr,min,sec)
 	elif min > 0:
-		return "%d:%02d" % (min,sec)
+		return "%d:%06.03f" % (min,sec)
 	else:
-		return "0:%02d" % sec
+		return "0:%06.03f" % sec
 
 def t_to_sec(t):
 	"""
-	Convert a time spec (HHH:MM:SS) into an integer number of seconds.
+	Convert a time spec (HHH:MM:SS) into an float number of seconds.
 	"""
+
+	if '.' in t:
+		parts = t.split('.')
+		t = parts[0]
+		frac = float('.' + parts[1])
+	else:
+		frac = 0.0
 
 	parts = t.split(':')
 	if len(parts) == 1:
-		return int(parts[0])
+		return int(parts[0]) + frac
 	elif len(parts) == 2:
-		return int(parts[0])*60 + int(parts[1])
+		return int(parts[0])*60 + int(parts[1]) + frac
 	elif len(parts) == 3:
-		return int(parts[0])*3600 + int(parts[1])*60 + int(parts[2])
+		return int(parts[0])*3600 + int(parts[1])*60 + int(parts[2]) + frac
 	else:
 		raise ValueError("Too many parts to time format: '%s'" % t)
 
@@ -200,8 +208,18 @@ class MKVXML_chapter:
 
 		raise Exception("Unable to find chapters")
 
+	@staticmethod
 	def FromXml(fname):
-		raise NotImplementedError
+		c = MKVXML_chapter()
+
+		tree = ET.parse(fname)
+		for e in tree.iter('ChapterAtom'):
+			l = e.find('ChapterTimeStart').text
+			title = e.find('ChapterDisplay').find('ChapterString').text
+			num = e.find('ChapterTrack').find('ChapterTrackNumber').text
+			c.AddChapter(l, title, num)
+
+		return c
 
 	def ToXml(self):
 		"""
