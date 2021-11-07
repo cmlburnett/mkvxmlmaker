@@ -10,7 +10,39 @@ from crudexml import node, tnode, dnode, docroot
 import os
 import subprocess
 
-__all__ = ["MKVXML_chapter", "MKVXML_tags"]
+__all__ = ["MKVXML_chapter", "MKVXML_tags", "sec_str", "t_to_sec"]
+
+
+def sec_str(sec):
+	"""
+	Convert integer seconds to HHH:MM:SS formatted string
+	Returns as HHH:MM:SS, MM:SS, or 0:SS with zero padding except for the most significant position.
+	"""
+
+	min,sec = divmod(sec, 60)
+	hr,min = divmod(min, 60)
+
+	if hr > 0:
+		return "%d:%02d:%02d" % (hr,min,sec)
+	elif min > 0:
+		return "%d:%02d" % (min,sec)
+	else:
+		return "0:%02d" % sec
+
+def t_to_sec(t):
+	"""
+	Convert a time spec (HHH:MM:SS) into an integer number of seconds.
+	"""
+
+	parts = t.split(':')
+	if len(parts) == 1:
+		return int(parts[0])
+	elif len(parts) == 2:
+		return int(parts[0])*60 + int(parts[1])
+	elif len(parts) == 3:
+		return int(parts[0])*3600 + int(parts[1])*60 + int(parts[2])
+	else:
+		raise ValueError("Too many parts to time format: '%s'" % t)
 
 class MKVXML_chapter:
 	_chapters = None
